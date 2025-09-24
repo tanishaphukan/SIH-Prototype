@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Heavy Metal Pollution Index (HMPI) Application</title>
+    
+    <!-- External Libraries -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Local Stylesheets -->
+    <link rel="stylesheet" href="SRC/css/styles.css">
+    <link rel="stylesheet" href="SRC/css/components.css">
+</head>
+<body>
+    <header>
+        <nav class="container">
+            <div class="logo">
+                <i class="fas fa-water"></i>
+                HMPI Monitor
+            </div>
+            <ul class="nav-links">
+                <li><a onclick="showTab('data-entry')">Data Entry</a></li>
+                <li><a onclick="showTab('mapping')">Map View</a></li>
+                <li><a onclick="showTab('leaderboard')">Leaderboard</a></li>
+                <li><a onclick="showTab('analytics')">Analytics</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <h1>Heavy Metal Pollution Index</h1>
+            <p>Advanced water quality monitoring and health risk prediction platform</p>
+            <button class="cta-button" onclick="showTab('data-entry')">Start Monitoring</button>
+        </div>
+    </section>
+
+    <main class="container">
+        <div class="main-content">
+            <div class="tabs">
+                <button class="tab active" onclick="showTab('data-entry')">
+                    <i class="fas fa-database"></i> Data Entry
+                </button>
+                <button class="tab" onclick="showTab('disease-prediction')">
+                    <i class="fas fa-heartbeat"></i> Disease Prediction
+                </button>
+                <button class="tab" onclick="showTab('mapping')">
+                    <i class="fas fa-map"></i> Interactive Map
+                </button>
+                <button class="tab" onclick="showTab('leaderboard')">
+                    <i class="fas fa-trophy"></i> Leaderboard
+                </button>
+                <button class="tab" onclick="showTab('analytics')">
+                    <i class="fas fa-chart-bar"></i> Analytics
+                </button>
+            </div>
+
+            <!-- Data Entry Tab -->
+            <div id="data-entry" class="tab-content active">
+                <h2>Water Quality Data Entry</h2>
+                
+                <div class="form-section">
+                    <h3><i class="fas fa-map-marker-alt"></i> Location Information</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="location-name">Location Name</label>
+                            <input type="text" id="location-name" placeholder="Enter location name">
+                        </div>
+                        <div class="form-group">
+                            <label for="latitude">Latitude</label>
+                            <input type="number" id="latitude" step="any" placeholder="e.g., 18.5204">
+                        </div>
+                        <div class="form-group">
+                            <label for="longitude">Longitude</label>
+                            <input type="number" id="longitude" step="any" placeholder="e.g., 73.8567">
+                        </div>
+                        <div class="form-group">
+                            <label for="sample-date">Sample Date</label>
+                            <input type="date" id="sample-date">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3><i class="fas fa-flask"></i> Heavy Metal Concentrations (mg/L)</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="lead">Lead (Pb)</label>
+                            <input type="number" id="lead" step="0.001" placeholder="0.000" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="mercury">Mercury (Hg)</label>
+                            <input type="number" id="mercury" step="0.001" placeholder="0.000" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="cadmium">Cadmium (Cd)</label>
+                            <input type="number" id="cadmium" step="0.001" placeholder="0.000" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="arsenic">Arsenic (As)</label>
+                            <input type="number" id="arsenic" step="0.001" placeholder="0.000" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="chromium">Chromium (Cr)</label>
+                            <input type="number" id="chromium" step="0.001" placeholder="0.000" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="copper">Copper (Cu)</label>
+                            <input type="number" id="copper" step="0.001" placeholder="0.000" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="zinc">Zinc (Zn)</label>
+                            <input type="number" id="zinc" step="0.001" placeholder="0.000" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="nickel">Nickel (Ni)</label>
+                            <input type="number" id="nickel" step="0.001" placeholder="0.000" min="0">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3><i class="fas fa-upload"></i> Bulk Data Upload</h3>
+                    <div class="upload-area" id="upload-area">
+                        <i class="fas fa-cloud-upload-alt" style="font-size: 3rem; color: #ccc; margin-bottom: 20px;"></i>
+                        <p style="font-size: 1.2rem; margin-bottom: 10px;">Drag & drop CSV files here or click to browse</p>
+                        <p style="color: #666;">Supported formats: CSV</p>
+                        <input type="file" id="file-upload" accept=".csv" style="display: none;">
+                        <button class="cta-button" style="margin-top: 15px;" onclick="document.getElementById('file-upload').click()">
+                            Choose File
+                        </button>
+                    </div>
+                    <button class="cta-button" onclick="downloadTemplate()" style="margin-top: 15px;">
+                        <i class="fas fa-download"></i> Download Template
+                    </button>
+                </div>
+
+                <div style="text-align: center;">
+                    <button class="calculate-btn" onclick="calculateIndices()">
+                        <i class="fas fa-calculator"></i> Calculate Pollution Indices
+                    </button>
+                    <button class="calculate-btn" onclick="predictHealthRisk()">
+                        <i class="fas fa-heartbeat"></i> Predict Health Risk
+                    </button>
+                    <button class="calculate-btn" onclick="clearForm()" style="background: linear-gradient(45deg, #e74c3c, #c0392b);">
+                        <i class="fas fa-trash"></i> Clear Form
+                    </button>
+                </div>
+
+                <div id="results" style="display: none;">
+                    <div class="results-section">
+                        <h3><i class="fas fa-chart-line"></i> Pollution Analysis Results</h3>
+                        <div class="results-grid">
+                            <div class="result-card">
+                                <h4><i class="fas fa-thermometer-half"></i> Heavy Metal Pollution Index (HPI)</h4>
+                                <div class="result-value" id="hpi-value">-</div>
+                                <div class="result-status" id="hpi-status">-</div>
+                                <p style="margin-top: 10px; opacity: 0.9;">Overall pollution assessment based on weighted metal concentrations</p>
+                            </div>
+                            <div class="result-card">
+                                <h4><i class="fas fa-weight"></i> Heavy Metal Evaluation Index (HEI)</h4>
+                                <div class="result-value" id="hei-value">-</div>
+                                <div class="result-status" id="hei-status">-</div>
+                                <p style="margin-top: 10px; opacity: 0.9;">Sum of concentration ratios to permissible limits</p>
+                            </div>
+                            <div class="result-card">
+                                <h4><i class="fas fa-exclamation-triangle"></i> Contamination Degree (Cd)</h4>
+                                <div class="result-value" id="cd-value">-</div>
+                                <div class="result-status" id="cd-status">-</div>
+                                <p style="margin-top: 10px; opacity: 0.9;">Cumulative contamination factor assessment</p>
+                            </div>
+                            <div class="result-card">
+                                <h4><i class="fas fa-heartbeat"></i> Health Risk Prediction</h4>
+                                <div class="result-value" id="health-risk-value">-</div>
+                                <div class="result-status" id="health-risk-status">-</div>
+                                <p style="margin-top: 10px; opacity: 0.9;">AI-powered health risk assessment</p>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-top: 30px;">
+                            <h4><i class="fas fa-lightbulb"></i> Key Contributing Factors</h4>
+                            <div id="risk-factors" style="margin-top: 15px;">
+                                <!-- Risk factors will be populated here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Disease Prediction Tab -->
+            <div id="disease-prediction" class="tab-content">
+                <h2>AI-Powered Disease Risk Prediction</h2>
+                <p>Advanced machine learning analysis of health risks based on heavy metal exposure levels.</p>
+                
+                <div class="form-section">
+                    <h3><i class="fas fa-brain"></i> ML Model Status</h3>
+                    <div id="ml-status" class="alert alert-info">
+                        <i class="fas fa-spinner fa-spin"></i> Loading disease prediction model...
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3><i class="fas fa-calculator"></i> Prediction Controls</h3>
+                    <div style="text-align: center;">
+                        <button class="calculate-btn" onclick="runDiseaseAnalysis()" id="predict-btn" disabled>
+                            <i class="fas fa-microscope"></i> Run Disease Risk Analysis
+                        </button>
+                        <button class="calculate-btn" onclick="generateHealthReport()" style="background: linear-gradient(45deg, #27ae60, #2ecc71);">
+                            <i class="fas fa-file-medical"></i> Generate Health Report
+                        </button>
+                    </div>
+                </div>
+
+                <div id="disease-results" style="display: none;">
+                    <div class="results-section">
+                        <h3><i class="fas fa-chart-pie"></i> Disease Risk Analysis</h3>
+                        
+                        <div class="result-card" style="margin-bottom: 25px;">
+                            <h4><i class="fas fa-thermometer-three-quarters"></i> Overall Health Risk</h4>
+                            <div class="result-value" id="overall-risk-value">-</div>
+                            <div class="result-status" id="overall-risk-status">-</div>
+                        </div>
+
+                        <div class="results-grid" id="disease-predictions-grid">
+                            <!-- Disease predictions will be populated here -->
+                        </div>
+                        
+                        <div style="margin-top: 30px;" id="health-recommendations">
+                            <h4><i class="fas fa-stethoscope"></i> Health Recommendations</h4>
+                            <div id="recommendations-content">
+                                <!-- Recommendations will be populated here -->
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 30px;" id="critical-metals-section">
+                            <h4><i class="fas fa-exclamation-triangle"></i> Critical Metal Exposure</h4>
+                            <div id="critical-metals-content">
+                                <!-- Critical metals will be populated here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3><i class="fas fa-info-circle"></i> About Disease Prediction</h3>
+                    <div style="background: white; padding: 20px; border-radius: 10px;">
+                        <p><strong>Our AI Model analyzes:</strong></p>
+                        <ul style="margin-left: 20px; margin-top: 10px;">
+                            <li>Heavy metal concentration patterns</li>
+                            <li>Synergistic effects of multiple metals</li>
+                            <li>Dose-response relationships from medical literature</li>
+                            <li>Population-based risk factors</li>
+                        </ul>
+                        <p style="margin-top: 15px;"><strong>Predicted Diseases Include:</strong></p>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-top: 10px;">
+                            <span style="background: #ecf0f1; padding: 5px 10px; border-radius: 15px; font-size: 0.9rem;">Neurological Disorders</span>
+                            <span style="background: #ecf0f1; padding: 5px 10px; border-radius: 15px; font-size: 0.9rem;">Kidney Disease</span>
+                            <span style="background: #ecf0f1; padding: 5px 10px; border-radius: 15px; font-size: 0.9rem;">Cardiovascular Disease</span>
+                            <span style="background: #ecf0f1; padding: 5px 10px; border-radius: 15px; font-size: 0.9rem;">Respiratory Issues</span>
+                            <span style="background: #ecf0f1; padding: 5px 10px; border-radius: 15px; font-size: 0.9rem;">GI Problems</span>
+                            <span style="background: #ecf0f1; padding: 5px 10px; border-radius: 15px; font-size: 0.9rem;">Skin Disorders</span>
+                            <span style="background: #ecf0f1; padding: 5px 10px; border-radius: 15px; font-size: 0.9rem;">Cancer Risk</span>
+                            <span style="background: #ecf0f1; padding: 5px 10px; border-radius: 15px; font-size: 0.9rem;">Bone Disease</span>
+                        </div>
+                        <div class="alert alert-info" style="margin-top: 15px;">
+                            <strong>Disclaimer:</strong> This tool provides risk assessment based on exposure data and should not replace professional medical consultation. Always consult healthcare providers for accurate diagnosis and treatment.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mapping Tab -->
+            <div id="mapping" class="tab-content">
+                <h2>Interactive Pollution Map</h2>
+                <p>Visualize pollution data across different locations with interactive markers and detailed information.</p>
+                <div id="map"></div>
+                
+                <div style="margin-top: 30px;">
+                    <h3>Recent Monitoring Locations</h3>
+                    <table class="data-table" id="locations-table">
+                        <thead>
+                            <tr>
+                                <th>Location</th>
+                                <th>Date</th>
+                                <th>HPI</th>
+                                <th>HEI</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="6" style="text-align: center; padding: 40px; color: #6c757d;">
+                                    <i class="fas fa-database" style="font-size: 2rem; margin-bottom: 10px; display: block;"></i>
+                                    No monitoring data available. Start by adding location data!
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Leaderboard Tab -->
+            <div id="leaderboard" class="tab-content">
+                <h2>Water Quality Leaderboard</h2>
+                <p>Track pollution levels across different monitoring locations.</p>
+                
+                <div class="leaderboard-container">
+                    <div class="leaderboard-card">
+                        <h3><i class="fas fa-exclamation-circle"></i> Most Polluted Areas</h3>
+                        <div id="pollution-leaderboard">
+                            <div class="alert alert-info" style="text-align: center;">
+                                <i class="fas fa-database"></i>
+                                No pollution data available. Start by adding monitoring data!
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="leaderboard-card">
+                        <h3><i class="fas fa-leaf"></i> Cleanest Areas</h3>
+                        <div id="clean-leaderboard">
+                            <div class="alert alert-info" style="text-align: center;">
+                                <i class="fas fa-database"></i>
+                                No data available. Add monitoring locations to see rankings!
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analytics Tab -->
+            <div id="analytics" class="tab-content">
+                <h2>Advanced Analytics</h2>
+                <p>Comprehensive analysis and trends in water quality monitoring.</p>
+                
+                <div class="form-section">
+                    <h3><i class="fas fa-chart-area"></i> Pollution Trends</h3>
+                    <canvas id="trendsChart" width="400" height="200"></canvas>
+                </div>
+                
+                <div class="form-section">
+                    <h3><i class="fas fa-bullseye"></i> Metal Distribution</h3>
+                    <canvas id="distributionChart" width="400" height="200"></canvas>
+                </div>
+                
+                <div class="form-section">
+                    <h3><i class="fas fa-download"></i> Export & Reports</h3>
+                    <div style="text-align: center;">
+                        <button class="calculate-btn" onclick="exportResults()">
+                            <i class="fas fa-download"></i> Export Data (CSV)
+                        </button>
+                        <button class="calculate-btn" onclick="generateReport()" style="background: linear-gradient(45deg, #f39c12, #e67e22);">
+                            <i class="fas fa-file-pdf"></i> Generate Report
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- AI Chatbot -->
+    <div class="chatbot-container">
+        <button class="chatbot-toggle" onclick="toggleChatbot()">
+            <i class="fas fa-comments"></i>
+        </button>
+        <div class="chatbot-window" id="chatbot-window">
+            <div class="chatbot-header">
+                <div>
+                    <i class="fas fa-robot"></i> HMPI Assistant
+                </div>
+                <button onclick="toggleChatbot()" style="background: none; border: none; color: white; font-size: 1.2rem; cursor: pointer;">×</button>
+            </div>
+            <div class="chatbot-messages" id="chatbot-messages">
+                <div class="message bot">
+                    <strong>HMPI Assistant:</strong> Hello! I'm here to help you understand heavy metal pollution and use this application. Ask me about pollution indices, health risks, or how to use any features!
+                </div>
+            </div>
+            <div class="chatbot-input">
+                <input type="text" id="chatbot-input" placeholder="Ask me about pollution monitoring..." onkeypress="handleChatKeyPress(event)">
+                <button onclick="sendChatMessage()">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- External Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+    
+    <!-- Local Scripts -->
+    <script src="SRC/js/utils.js"></script>
+    <script src="SRC/js/calculations.js"></script>
+    <script src="SRC/js/ml-model.js"></script>
+    <script src="SRC/js/map.js"></script>
+    <script src="SRC/js/charts.js"></script>
+    <script src="SRC/js/chatbot.js"></script>
+    <script src="SRC/js/main.js"></script>
+</body>
+</html>
+  
+
