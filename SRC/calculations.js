@@ -70,3 +70,4 @@ function getHealthRiskWeight(metal) {
     };
     return weights[metal] || 0.5;
 }
+
